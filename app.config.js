@@ -12,6 +12,7 @@ export default {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      bundleIdentifier: "com.leekangryong.zzanfe",
       infoPlist: {
         NSLocationWhenInUseUsageDescription:
           "전통주 장소를 찾기 위해 현재 위치가 필요합니다.",
@@ -35,6 +36,7 @@ export default {
       favicon: "./assets/images/thumbnail.png",
     },
     plugins: [
+      "expo-dev-client",
       "expo-router",
       [
         "expo-splash-screen",
