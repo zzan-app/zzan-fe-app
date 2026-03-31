@@ -1,4 +1,8 @@
 import { QueryProvider } from "@/shared/providers";
+import {
+  initNotificationHandler,
+  setupNotificationResponseListener,
+} from "@/shared/notifications";
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -23,6 +27,12 @@ export default function RootLayout() {
     "KakaoSmallSans-Light": require("../assets/fonts/KakaoSmallSans-Light.ttf"),
     "KakaoSmallSans-Regular": require("../assets/fonts/KakaoSmallSans-Regular.ttf"),
   });
+
+  useEffect(() => {
+    initNotificationHandler();
+    const cleanup = setupNotificationResponseListener();
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     if (loaded || error) {

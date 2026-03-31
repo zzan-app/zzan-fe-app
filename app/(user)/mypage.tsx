@@ -70,10 +70,14 @@ export default function MyPageTab() {
     }
   }, [error]);
 
+  // TODO: BE 작업시 코드 제거
   const handleTestNotification = async () => {
     const token = await registerPushToken();
     if (token) {
-      Alert.alert("토큰 발급 완료", token);
+      Alert.alert(
+        "🔔 알림 테스트",
+        `5초 후 알림이 도착합니다.\n지금 앱을 백그라운드로 이동하세요!\n\n토큰: ${token}`
+      );
     }
     await sendTestNotification();
   };
@@ -89,7 +93,7 @@ export default function MyPageTab() {
       <View style={styles.profileInfo}>
         {user && <ProfileInfoBlock user={user} />}
       </View>
-      {/* TODO: 테스트용 - BE 연동 후 제거 */}
+      {/* TODO: BE 작업시 코드 제거 */}
       <TouchableOpacity
         style={styles.testButton}
         onPress={handleTestNotification}
