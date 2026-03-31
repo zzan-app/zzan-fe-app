@@ -20,7 +20,13 @@ export default {
     },
     android: {
       package: "com.leekangryong.zzanfe",
-      permissions: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./android/app/google-services.json",
+      permissions: [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+      ],
       adaptiveIcon: {
         backgroundColor: "#FFD800",
         foregroundImage: "./assets/images/thumbnail_padding.png",
@@ -38,6 +44,14 @@ export default {
     plugins: [
       "expo-dev-client",
       "expo-router",
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/images/thumbnail.png",
+          color: "#FFD800",
+          sounds: [],
+        },
+      ],
       [
         "expo-splash-screen",
         {
