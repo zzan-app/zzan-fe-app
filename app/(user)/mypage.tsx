@@ -74,10 +74,7 @@ export default function MyPageTab() {
   const handleTestNotification = async () => {
     const token = await registerPushToken();
     if (token) {
-      Alert.alert(
-        "🔔 알림 테스트",
-        `5초 후 알림이 도착합니다.\n지금 앱을 백그라운드로 이동하세요!\n\n토큰: ${token}`
-      );
+      Alert.alert("🔔 알림 테스트", `FCM 토큰: ${token}`);
     }
     await sendTestNotification();
   };
