@@ -45,3 +45,9 @@ app-example
 
 # remove docs
 docs/
+
+# IDE
+.idea/
+
+# Claude Code local settings (contains broad permissions)
+.claude/settings.local.json
