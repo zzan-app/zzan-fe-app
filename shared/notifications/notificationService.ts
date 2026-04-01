@@ -53,17 +53,29 @@ export const registerPushToken = async (): Promise<string | null> => {
     return null;
   }
 
-  const token = await Notifications.getExpoPushTokenAsync({ projectId });
-  await SecureStore.setItemAsync(PUSH_TOKEN_KEY, token.data);
-  console.log("[Notifications] 푸시 토큰 발급 완료:", token.data);
-
-  return token.data;
+  try {
+    const token = await Notifications.getExpoPushTokenAsync({ projectId });
+    await SecureStore.setItemAsync(PUSH_TOKEN_KEY, token.data);
+    console.log("[Notifications] 푸시 토큰 발급 완료:", token.data);
+    return token.data;
+  } catch (e) {
+    console.error("[Notifications] 토큰 발급 실패:", e);
+    return null;
+  }
 };
 
 /** SecureStore에서 저장된 토큰 조회 */
 export const getStoredPushToken = async (): Promise<string | null> => {
   return SecureStore.getItemAsync(PUSH_TOKEN_KEY);
 };
+
+const ALLOWED_SCREENS = [
+  "/",
+  "/(tabs)/map",
+  "/(tabs)/feed",
+  "/(info)/place",
+  "/(info)/alcohol",
+];
 
 /** 알림 탭 리스너 등록 (포그라운드/백그라운드/종료 후 모두 처리) */
 export const setupNotificationResponseListener = (): (() => void) => {
@@ -73,7 +85,10 @@ export const setupNotificationResponseListener = (): (() => void) => {
         string,
         unknown
       >;
-      const screen = typeof data?.screen === "string" ? data.screen : "/";
+      const screen =
+        typeof data?.screen === "string" && ALLOWED_SCREENS.includes(data.screen)
+          ? data.screen
+          : "/";
       router.replace(screen as never);
     },
   );
@@ -101,5 +116,5 @@ export const sendTestNotification = async (): Promise<void> => {
     },
   });
 
-  console.log("[Notifications] 테스트 알림 발송 완료 (5초 후 도착)");
+  console.log("[Notifications] 테스트 알림 발송 완료 (2초 후 도착)");
 };

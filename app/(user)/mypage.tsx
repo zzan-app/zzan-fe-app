@@ -59,7 +59,7 @@ const TabSelector = ({
 
 export default function MyPageTab() {
   const [selectedTab, setSelectedTab] = useState<TabType>("스크랩");
-  const { user, isLoading, error } = useUserViewModel();
+  const { user, error } = useUserViewModel();
   const [showToast, setShowToast] = useState(false);
   const insets = useSafeAreaInsets();
   const safeBottom = insets.bottom || Layout.BOTTOM_SAFE_AREA_FALLBACK;

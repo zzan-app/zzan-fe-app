@@ -30,9 +30,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     initNotificationHandler();
+  }, []);
+
+  useEffect(() => {
+    if (!appIsReady) return;
     const cleanup = setupNotificationResponseListener();
     return cleanup;
-  }, []);
+  }, [appIsReady]);
 
   useEffect(() => {
     if (loaded || error) {
