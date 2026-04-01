@@ -56,7 +56,7 @@ export const registerPushToken = async (): Promise<string | null> => {
   try {
     const token = await Notifications.getExpoPushTokenAsync({ projectId });
     await SecureStore.setItemAsync(PUSH_TOKEN_KEY, token.data);
-    console.log("[Notifications] 푸시 토큰 발급 완료:", token.data);
+    console.log("[Notifications] 푸시 토큰 발급 완료");
     return token.data;
   } catch (e) {
     console.error("[Notifications] 토큰 발급 실패:", e);
@@ -77,7 +77,23 @@ const ALLOWED_SCREENS = [
   "/(info)/alcohol",
 ];
 
-/** 알림 탭 리스너 등록 (포그라운드/백그라운드/종료 후 모두 처리) */
+const navigateFromNotification = (data: Record<string, unknown>): void => {
+  const screen =
+    typeof data?.screen === "string" && ALLOWED_SCREENS.includes(data.screen)
+      ? data.screen
+      : "/";
+  router.replace(screen as never);
+};
+
+/** Cold-start: 앱 종료 상태에서 알림 탭으로 실행된 경우 처리 */
+export const handleColdStartNotification = async (): Promise<void> => {
+  const response = await Notifications.getLastNotificationResponseAsync();
+  if (!response) return;
+  const data = response.notification.request.content.data as Record<string, unknown>;
+  navigateFromNotification(data);
+};
+
+/** 알림 탭 리스너 등록 (포그라운드/백그라운드 처리) */
 export const setupNotificationResponseListener = (): (() => void) => {
   const subscription = Notifications.addNotificationResponseReceivedListener(
     (response) => {
@@ -85,11 +101,7 @@ export const setupNotificationResponseListener = (): (() => void) => {
         string,
         unknown
       >;
-      const screen =
-        typeof data?.screen === "string" && ALLOWED_SCREENS.includes(data.screen)
-          ? data.screen
-          : "/";
-      router.replace(screen as never);
+      navigateFromNotification(data);
     },
   );
   return () => subscription.remove();

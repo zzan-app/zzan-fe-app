@@ -1,5 +1,6 @@
 import { QueryProvider } from "@/shared/providers";
 import {
+  handleColdStartNotification,
   initNotificationHandler,
   setupNotificationResponseListener,
 } from "@/shared/notifications";
@@ -34,6 +35,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!appIsReady) return;
+    handleColdStartNotification();
     const cleanup = setupNotificationResponseListener();
     return cleanup;
   }, [appIsReady]);
