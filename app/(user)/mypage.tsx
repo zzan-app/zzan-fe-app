@@ -2,9 +2,14 @@ import { MyFeeds, MyScraps, ProfileInfoBlock } from "@/domains/user/components";
 import { useUserViewModel } from "@/domains/user/viewmodel";
 import { Header, Toast } from "@/shared/components";
 import { Colors, Layout, Typography } from "@/shared/constants";
+import {
+  registerPushToken,
+  sendTestNotification,
+} from "@/shared/notifications";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -54,7 +59,7 @@ const TabSelector = ({
 
 export default function MyPageTab() {
   const [selectedTab, setSelectedTab] = useState<TabType>("스크랩");
-  const { user, isLoading, error } = useUserViewModel();
+  const { user, error } = useUserViewModel();
   const [showToast, setShowToast] = useState(false);
   const insets = useSafeAreaInsets();
   const safeBottom = insets.bottom || Layout.BOTTOM_SAFE_AREA_FALLBACK;
@@ -64,6 +69,15 @@ export default function MyPageTab() {
       setShowToast(true);
     }
   }, [error]);
+
+  // TODO: BE 작업시 코드 제거
+  const handleTestNotification = async () => {
+    const token = await registerPushToken();
+    if (token) {
+      Alert.alert("🔔 알림 테스트", `FCM 토큰: ${token}`);
+    }
+    await sendTestNotification();
+  };
 
   return (
     <View style={[styles.container, { paddingBottom: safeBottom }]}>
@@ -76,6 +90,13 @@ export default function MyPageTab() {
       <View style={styles.profileInfo}>
         {user && <ProfileInfoBlock user={user} />}
       </View>
+      {/* TODO: BE 작업시 코드 제거 */}
+      <TouchableOpacity
+        style={styles.testButton}
+        onPress={handleTestNotification}
+      >
+        <Text style={styles.testButtonText}>🔔 테스트</Text>
+      </TouchableOpacity>
       <View style={styles.tabSection}>
         <TabSelector selected={selectedTab} onSelect={setSelectedTab} />
       </View>
@@ -123,5 +144,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: Layout.SCREEN_HORIZONTAL,
     paddingTop: 32,
     paddingBottom: 16,
+  },
+  testButton: {
+    marginHorizontal: Layout.SCREEN_HORIZONTAL,
+    marginBottom: 8,
+    backgroundColor: Colors.yellow,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  testButtonText: {
+    fontFamily: Typography.KAKAO_SMALL_SANS_BOLD,
+    fontSize: 14,
+    color: Colors.black,
   },
 });

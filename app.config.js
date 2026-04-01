@@ -12,6 +12,7 @@ export default {
     newArchEnabled: true,
     ios: {
       supportsTablet: true,
+      bundleIdentifier: "com.leekangryong.zzanfe",
       infoPlist: {
         NSLocationWhenInUseUsageDescription:
           "전통주 장소를 찾기 위해 현재 위치가 필요합니다.",
@@ -19,7 +20,13 @@ export default {
     },
     android: {
       package: "com.leekangryong.zzanfe",
-      permissions: ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"],
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./android/app/google-services.json",
+      permissions: [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+      ],
       adaptiveIcon: {
         backgroundColor: "#FFD800",
         foregroundImage: "./assets/images/thumbnail_padding.png",
@@ -35,7 +42,16 @@ export default {
       favicon: "./assets/images/thumbnail.png",
     },
     plugins: [
+      "expo-dev-client",
       "expo-router",
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/images/thumbnail.png",
+          color: "#FFD800",
+          sounds: [],
+        },
+      ],
       [
         "expo-splash-screen",
         {
