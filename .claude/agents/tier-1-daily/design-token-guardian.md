@@ -19,44 +19,42 @@ Scan React Native/Expo codebases for hardcoded design values and enforce token u
 ### 1. Hardcoded Colors
 ```typescript
 // ❌ BAD
-<View style={{ backgroundColor: '#007AFF' }} />
-<Text style={{ color: 'rgb(0, 122, 255)' }} />
-<View style={{ backgroundColor: 'rgba(0,0,0,0.1)' }} />
+<View style={{ backgroundColor: '#FFD800' }} />
+<Text style={{ color: '#1F1F1F' }} />
+<View style={{ backgroundColor: '#F7F5F0' }} />
 
 // ✅ GOOD
-<View style={{ backgroundColor: theme.colors.primary }} />
-<Text style={{ color: colors.primary }} />
-<View style={{ backgroundColor: theme.colors.overlay }} />
+<View style={{ backgroundColor: Colors.yellow }} />
+<Text style={{ color: Colors.black }} />
+<View style={{ backgroundColor: Colors.takju }} />
 ```
 
 ### 2. Hardcoded Spacing
 ```typescript
 // ❌ BAD
-<View style={{ padding: 16, marginTop: 20 }} />
+<View style={{ padding: 16, marginTop: 16 }} />
 <View style={{ gap: 8 }} />
 
 // ✅ GOOD
-<View style={{ padding: theme.spacing.md, marginTop: theme.spacing.lg }} />
-<View style={{ gap: theme.spacing.sm }} />
+<View style={{ padding: Layout.SCREEN_HORIZONTAL, marginTop: Layout.SECTION_SPACING }} />
+<View style={{ gap: Layout.ITEM_SPACING }} />
 ```
 
 ### 3. Hardcoded Typography
 ```typescript
 // ❌ BAD
-<Text style={{ fontSize: 16, fontWeight: '600' }} />
+<Text style={{ fontSize: 14, fontFamily: 'KakaoSmallSans-Regular' }} />
 
 // ✅ GOOD
-<Text style={[typography.body, { fontWeight: '600' }]} />
+<Text style={{ fontSize: Typography.MESSAGE_TEXT, fontFamily: Typography.KAKAO_SMALL_SANS_REGULAR }} />
 ```
 
 ## Design System Sources
 
 Look for tokens in:
-- `src/theme/index.ts`
-- `src/theme/colors.ts`
-- `src/theme/spacing.ts`
-- `src/theme/typography.ts`
-- `src/constants/theme.ts`
+- `shared/constants/Colors.ts` — `Colors.black`, `Colors.yellow`, `Colors.gray`, `Colors.takju`, `Colors.white`, `Colors.purple`, `Colors.red`, `Colors.time`, `Colors.detail`
+- `shared/constants/Layout.ts` — `Layout.SCREEN_HORIZONTAL`, `Layout.SECTION_SPACING`, `Layout.ITEM_SPACING`, `Layout.MESSAGE_SPACING`, `Layout.CHIP_RADIUS`, `Layout.MESSAGE_RADIUS`, `Layout.INPUT_RADIUS` 등
+- `shared/constants/Typography.ts` — `Typography.KAKAO_BIG_SANS_BOLD/EXTRABOLD/REGULAR`, `Typography.KAKAO_SMALL_SANS_BOLD/LIGHT/REGULAR`, `Typography.MESSAGE_TEXT(14)`, `Typography.CHIP_TEXT(12)`, `Typography.INPUT_TEXT(12)`
 
 ## Output Format
 
