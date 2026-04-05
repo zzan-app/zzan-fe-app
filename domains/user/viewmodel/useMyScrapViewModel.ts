@@ -9,6 +9,7 @@ import {
   type UserScrapAlcohol,
 } from "@/domains/user/model";
 import { scrapApi } from "@/shared/api";
+import { AuthRequiredError } from "@/shared/api/errors";
 import { isMockEnabled } from "@/shared/utils";
 import { useCallback, useEffect, useState } from "react";
 
@@ -49,6 +50,7 @@ export const useMyScrapViewModel = () => {
       setFeeds(mappedFeeds);
       setAlcohols(mappedLiquors);
     } catch (err) {
+      if (err instanceof AuthRequiredError) return;
       console.error("[MyScrapViewModel] Failed to load scraps:", err);
       setError("스크랩 목록을 불러오는데 실패했습니다");
       loadMockScraps();

@@ -1,62 +1,48 @@
 import KakaoIcon from "@/assets/icons/kakao_black.svg";
+import { useAuthModalStore } from "@/shared/store/authModalStore";
 import { useRouter } from "expo-router";
 import {
   Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { Colors, Layout, Typography } from "../constants";
-import { isMockEnabled } from "../utils/env";
 
-interface KakaoLoginModalProps {
-  visible: boolean;
-  onClose: () => void;
-}
-
-const KaKaoButton = () => {
+export const KakaoLoginModal = () => {
+  const { isLoginModalVisible, closeLoginModal } = useAuthModalStore();
   const router = useRouter();
 
-  return (
-    <TouchableOpacity
-      style={styles.kakaoContainer}
-      onPress={() => router.push("/login")}
-    >
-      <KakaoIcon width={24} height={24} />
-      <Text style={styles.kakaoText}>카카오로 3초 만에 시작하기</Text>
-    </TouchableOpacity>
-  );
-};
-
-export const KakaoLoginModal = ({ visible, onClose }: KakaoLoginModalProps) => {
-  if (isMockEnabled()) {
-    return null;
-  }
+  const handleKakaoLogin = () => {
+    closeLoginModal();
+    router.push("/login");
+  };
 
   return (
     <Modal
-      visible={visible}
+      visible={isLoginModalVisible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}
+      onRequestClose={closeLoginModal}
     >
-      <TouchableWithoutFeedback>
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback>
-            <View style={styles.container}>
-              <View style={styles.textContainer}>
-                <Text style={styles.mainText}>로그인 후 이용해주세요</Text>
-                <Text style={styles.subText}>
-                  해당 기능은 로그인 후 이용 가능합니다
-                </Text>
-              </View>
-              <KaKaoButton />
-            </View>
-          </TouchableWithoutFeedback>
+      <View style={styles.overlay}>
+        <View style={styles.container}>
+          <View style={styles.textContainer}>
+            <Text style={styles.mainText}>로그인 후 이용해주세요</Text>
+            <Text style={styles.subText}>
+              해당 기능은 로그인 후 이용 가능합니다
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.kakaoContainer}
+            onPress={handleKakaoLogin}
+          >
+            <KakaoIcon width={24} height={24} />
+            <Text style={styles.kakaoText}>카카오로 3초 만에 시작하기</Text>
+          </TouchableOpacity>
         </View>
-      </TouchableWithoutFeedback>
+      </View>
     </Modal>
   );
 };

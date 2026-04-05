@@ -1,10 +1,10 @@
-import { useAuthStore } from "@/domains/auth/store";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import React, { useState } from "react";
+import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import Svg, { Defs, Path, RadialGradient, Stop } from "react-native-svg";
 import { Colors, Typography } from "../constants";
-import { KakaoLoginModal } from "./KakaoLoginModal";
+import { useAuthModalStore } from "../store/authModalStore";
+import { useAuthStore } from "@/domains/auth/store";
 
 import HomeEmptyIcon from "@/assets/icons/home_empty.svg";
 import HomeGrayIcon from "@/assets/icons/home_gray.svg";
@@ -99,7 +99,7 @@ export const TabBar = ({ state, navigation }: BottomTabBarProps) => {
   const currentRouteName = state.routes[state.index].name;
   const isPostTab = currentRouteName === "post";
   const { accessToken } = useAuthStore();
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { openLoginModal } = useAuthModalStore();
 
   if (isPostTab) {
     return <View style={{ height: 0 }} />;
@@ -116,13 +116,12 @@ export const TabBar = ({ state, navigation }: BottomTabBarProps) => {
         {orderedRoutes.map((route) => {
           const isFocused = state.routes[state.index].name === route.name;
           const isPost = route.name === "post";
-          const isFeed = route.name === "feed";
           const label = getLabelByRouteName(route.name);
           const textColor = isFocused ? Colors.black : Colors.gray;
 
           const onPress = () => {
-            if ((isFeed || isPost) && !accessToken) {
-              setShowLoginModal(true);
+            if (isPost && !accessToken) {
+              openLoginModal();
               return;
             }
 
@@ -152,10 +151,6 @@ export const TabBar = ({ state, navigation }: BottomTabBarProps) => {
           );
         })}
       </View>
-      <KakaoLoginModal
-        visible={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
     </View>
   );
 };

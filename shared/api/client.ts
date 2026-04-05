@@ -1,6 +1,7 @@
 import { getApiUrl } from '../utils/env';
 import { attemptTokenRefresh } from './interceptors/tokenRefreshInterceptor';
 import { API_ENDPOINTS } from './endpoints';
+import { AuthRequiredError } from './errors';
 
 export class ApiClientError extends Error {
   constructor(
@@ -60,6 +61,16 @@ export const apiClient = async <T>(
   options: RequestOptions = {}
 ): Promise<T> => {
   const { method = 'GET', body, headers = {}, requireAuth = false } = options;
+
+  if (requireAuth) {
+    ensureAuthTokenGetterInitialized();
+    const token = getAuthTokenFn();
+    if (!token) {
+      const { useAuthModalStore } = require('@/shared/store/authModalStore');
+      useAuthModalStore.getState().openLoginModal();
+      throw new AuthRequiredError();
+    }
+  }
 
   const baseUrl = getApiUrl();
   const url = `${baseUrl}${endpoint}`;

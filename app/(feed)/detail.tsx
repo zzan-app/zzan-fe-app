@@ -1,4 +1,3 @@
-import { useAuthStore } from "@/domains/auth/store";
 import {
   FeedDetailComments,
   FeedDetailImage,
@@ -7,9 +6,8 @@ import {
   ReferredAlcoholWithRate,
 } from "@/domains/feed/components";
 import { useDetailViewModel } from "@/domains/feed/viewmodel";
-import { BookMark, Header, KakaoLoginModal, Share } from "@/shared/components";
+import { BookMark, Header, Share } from "@/shared/components";
 import { Colors, Layout } from "@/shared/constants";
-import { useModal } from "@/shared/hooks";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   ActivityIndicator,
@@ -72,17 +70,6 @@ export default function DetailTab() {
     handleBookmark,
   } = useDetailViewModel(feedId);
 
-  const { isAuthenticated } = useAuthStore();
-  const { visible, openModal, closeModal } = useModal();
-
-  const handleBookmarkWithAuth = async () => {
-    const success = await handleBookmark();
-
-    if (!success && !isAuthenticated) {
-      openModal();
-    }
-  };
-
   if (isLoading) {
     return (
       <View style={[styles.container, styles.centerContent]}>
@@ -124,7 +111,7 @@ export default function DetailTab() {
             username={user.username}
             isBookmarked={isBookmarked}
             onShare={handleShare}
-            onBookmark={handleBookmarkWithAuth}
+            onBookmark={handleBookmark}
           />
 
           <ReferredAlcoholWithRate
@@ -158,7 +145,6 @@ export default function DetailTab() {
         </View>
       </ScrollView>
 
-      <KakaoLoginModal visible={visible} onClose={closeModal} />
     </View>
   );
 }

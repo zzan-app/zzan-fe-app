@@ -1,5 +1,4 @@
-import { useAuthStore } from "@/domains/auth/store";
-import { KakaoLoginModal, Rate } from "@/shared/components";
+import { Rate } from "@/shared/components";
 import { Colors, Typography } from "@/shared/constants";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -13,8 +12,6 @@ interface SourceCardProps {
 
 export const SourceCard = ({ source }: SourceCardProps) => {
   const router = useRouter();
-  const { accessToken } = useAuthStore();
-  const [showLoginModal, setShowLoginModal] = useState(false);
   const [score, setScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,10 +26,6 @@ export const SourceCard = ({ source }: SourceCardProps) => {
   }, [source.id]);
 
   const handlePress = () => {
-    if (!accessToken) {
-      setShowLoginModal(true);
-      return;
-    }
     router.push({
       pathname: "/alcohol",
       params: { liquorId: source.id },
@@ -57,26 +50,20 @@ export const SourceCard = ({ source }: SourceCardProps) => {
   };
 
   return (
-    <>
-      <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
-        <View style={styles.card}>
-          <Image source={{ uri: source.image_url }} style={styles.image} />
-          <View style={styles.info}>
-            <Text style={styles.name} numberOfLines={1}>
-              {source.name}
-            </Text>
-            <Text style={styles.details} numberOfLines={1}>
-              #{source.type}
-            </Text>
-            <View style={styles.ratingContainer}>{renderStars()}</View>
-          </View>
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+      <View style={styles.card}>
+        <Image source={{ uri: source.image_url }} style={styles.image} />
+        <View style={styles.info}>
+          <Text style={styles.name} numberOfLines={1}>
+            {source.name}
+          </Text>
+          <Text style={styles.details} numberOfLines={1}>
+            #{source.type}
+          </Text>
+          <View style={styles.ratingContainer}>{renderStars()}</View>
         </View>
-      </TouchableOpacity>
-      <KakaoLoginModal
-        visible={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-      />
-    </>
+      </View>
+    </TouchableOpacity>
   );
 };
 

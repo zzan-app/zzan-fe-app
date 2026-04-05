@@ -1,3 +1,4 @@
+import { KakaoLoginModal } from "@/shared/components";
 import { QueryProvider } from "@/shared/providers";
 import {
   handleColdStartNotification,
@@ -73,6 +74,7 @@ export default function RootLayout() {
               <Stack.Screen name="(user)" />
             </Stack>
             <SystemBars style="dark" hidden={{ navigationBar: true }} />
+            <KakaoLoginModal />
           </ThemeProvider>
         </KeyboardProvider>
       </SafeAreaProvider>

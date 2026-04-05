@@ -1,5 +1,5 @@
-import { useAuthStore } from "@/domains/auth/store";
 import { feedApi } from "@/domains/feed/api";
+import { AuthRequiredError } from "@/shared/api/errors";
 import {
   Alcohol,
   AlcoholTagInfo,
@@ -36,7 +36,6 @@ const mapImageTagsToAlcoholTagMappings = (
   );
 
 export const useDetailViewModel = (feedId?: string) => {
-  const { isAuthenticated } = useAuthStore();
   const [focusedAlcoholId, setFocusedAlcoholId] = useState<string | null>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -108,15 +107,12 @@ export const useDetailViewModel = (feedId?: string) => {
       const response = await scrapApi.feed.check(feedId);
       setIsBookmarked(response.data.exist);
     } catch (error) {
+      if (error instanceof AuthRequiredError) return;
       console.error("[DetailViewModel] Failed to check bookmark:", error);
     }
   }, [feedId]);
 
   const handleBookmark = useCallback(async (): Promise<boolean> => {
-    if (!isAuthenticated) {
-      return false;
-    }
-
     if (isMockEnabled()) {
       setIsBookmarked((prev) => !prev);
       return true;
@@ -135,11 +131,12 @@ export const useDetailViewModel = (feedId?: string) => {
       setIsBookmarked((prev) => !prev);
       return true;
     } catch (error) {
+      if (error instanceof AuthRequiredError) return false;
       console.error("[DetailViewModel] Failed to toggle bookmark:", error);
       setIsBookmarked((prev) => !prev);
       return false;
     }
-  }, [feedId, isBookmarked, isAuthenticated]);
+  }, [feedId, isBookmarked]);
 
   useEffect(() => {
     checkBookmarkStatus();

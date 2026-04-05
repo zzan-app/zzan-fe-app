@@ -1,5 +1,6 @@
 import { mapUserFeedApiToDomain } from "@/domains/user/mapper";
 import { mockUserFeeds, type UserFeed } from "@/domains/user/model";
+import { AuthRequiredError } from "@/shared/api/errors";
 import { isMockEnabled } from "@/shared/utils";
 import { useEffect, useState } from "react";
 import { userApi } from "../api";
@@ -23,6 +24,7 @@ export const useMyFeedsViewModel = () => {
       const mappedFeeds = response.items.map(mapUserFeedApiToDomain);
       setFeeds(mappedFeeds);
     } catch (err) {
+      if (err instanceof AuthRequiredError) return;
       setError("피드를 불러오는데 실패했습니다");
       console.error("[My Feeds Error]", err);
     } finally {

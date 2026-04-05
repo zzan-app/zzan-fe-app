@@ -11,6 +11,7 @@ import {
 } from "@/domains/info/model";
 import { userApi } from "@/domains/user/api";
 import { scrapApi } from "@/shared/api";
+import { AuthRequiredError } from "@/shared/api/errors";
 import { isMockEnabled } from "@/shared/utils";
 import { useCallback, useEffect, useState } from "react";
 import type { ImageSourcePropType } from "react-native";
@@ -122,6 +123,7 @@ export const useAlcoholViewModel = (liquorId?: string) => {
       const response = await scrapApi.liquor.check(liquorId);
       setIsBookmarked(response.data.exist);
     } catch (error) {
+      if (error instanceof AuthRequiredError) return;
       console.error("[InfoViewModel] Failed to check liquor bookmark:", error);
     }
   }, [liquorId]);
@@ -145,6 +147,7 @@ export const useAlcoholViewModel = (liquorId?: string) => {
       setIsBookmarked((prev) => !prev);
       return true;
     } catch (error) {
+      if (error instanceof AuthRequiredError) return false;
       console.error("[InfoViewModel] Failed to toggle liquor bookmark:", error);
       setIsBookmarked((prev) => !prev);
       return false;
@@ -165,6 +168,7 @@ export const useAlcoholViewModel = (liquorId?: string) => {
       const user = await userApi.getCurrentUser();
       setCurrentUserId(user.id);
     } catch (error) {
+      if (error instanceof AuthRequiredError) return;
       console.error("[InfoViewModel] Failed to fetch user:", error);
     }
   }, []);
@@ -228,6 +232,7 @@ export const useAlcoholViewModel = (liquorId?: string) => {
         await fetchReviews();
         return true;
       } catch (error) {
+        if (error instanceof AuthRequiredError) return false;
         console.error("[InfoViewModel] Failed to save review:", error);
         return false;
       }

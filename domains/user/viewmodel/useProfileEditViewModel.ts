@@ -1,5 +1,6 @@
 import { feedApi } from "@/domains/feed/api/feedApi";
 import { userApi } from "@/domains/user/api";
+import { AuthRequiredError } from "@/shared/api/errors";
 import { mapUserToApiRequest } from "@/domains/user/mapper";
 import type { User } from "@/domains/user/model";
 import { isMockEnabled } from "@/shared/utils";
@@ -48,6 +49,7 @@ export const useProfileEditViewModel = (
       console.log("[ProfileEdit] PUT /users/me 성공");
       return true;
     } catch (err: any) {
+      if (err instanceof AuthRequiredError) return false;
       console.error("[ProfileEdit] PUT /users/me 실패:", err);
 
       let errorMessage = "프로필 수정에 실패했습니다.";
@@ -127,6 +129,7 @@ export const useProfileEditViewModel = (
 
       console.log("[ProfileEdit] 프로필 이미지 업로드 성공:", presigned.key);
     } catch (err) {
+      if (err instanceof AuthRequiredError) return;
       console.error("[ProfileEdit] 프로필 이미지 업로드 실패:", err);
       showErrorToast("이미지 업로드에 실패했습니다.");
     } finally {

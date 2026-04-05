@@ -1,5 +1,5 @@
-import { useAuthStore } from "@/domains/auth/store";
 import { feedApi } from "@/domains/feed/api";
+import { AuthRequiredError } from "@/shared/api/errors";
 import type {
   CreateFeedRequest,
   FeedImageRequest,
@@ -17,7 +17,6 @@ import { Alert } from "react-native";
 
 export const useRateViewModel = () => {
   const router = useRouter();
-  const { isAuthenticated } = useAuthStore();
   const {
     selectedAlcohols,
     alcoholRatings,
@@ -44,11 +43,6 @@ export const useRateViewModel = () => {
   };
 
   const completeAllRatings = async (): Promise<boolean> => {
-    // AUTH GUARD - return false to trigger modal in UI
-    if (!isAuthenticated) {
-      return false;
-    }
-
     if (isMockEnabled()) {
       completeWithMockData();
       return true;
@@ -93,6 +87,7 @@ export const useRateViewModel = () => {
       router.replace("/map");
       return true;
     } catch (error) {
+      if (error instanceof AuthRequiredError) return false;
       console.error("[Feed Creation Error]", error);
       Alert.alert("피드 작성 실패", "다시 시도해주세요.");
       return false;
